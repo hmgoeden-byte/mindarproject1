@@ -7,9 +7,23 @@
   <!-- These two lines load the AR libraries. Don't change them. -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    #soundButton {
+      position: fixed;
+      z-index: 10;
+      left: 50%;
+      bottom: 30px;
+      transform: translateX(-50%);
+      padding: 12px 18px;
+      font-size: 18px;
+    }
+  </style>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
+
+  <button id="soundButton">SOUND ON</button>
 
   <!--
     imageTargetSrc points to your targets.mind file.
@@ -23,7 +37,11 @@
     device-orientation-permission-ui="enabled: false"
   >
 
-    <!-- The video lives here. Muted + playsinline is needed for phones to autoplay it. -->
+    <!--
+      The video lives here.
+      Muted + playsinline is needed so phones can start it automatically.
+      The SOUND ON button unmutes it after the user taps.
+    -->
     <a-assets>
       <video
         id="arVideo"
@@ -51,7 +69,7 @@
         src="#arVideo"
         width="1"
         height="1.778"
-        position="0 0 0"
+        position="0 0 0.001"
         rotation="0 0 0"
       ></a-video>
 
@@ -64,13 +82,27 @@
     // and pause when it goes out of view.
     const target = document.querySelector("#target");
     const video = document.querySelector("#arVideo");
+    const soundButton = document.querySelector("#soundButton");
+
+    let targetVisible = false;
 
     target.addEventListener("targetFound", () => {
+      targetVisible = true;
       video.play();
     });
 
     target.addEventListener("targetLost", () => {
+      targetVisible = false;
       video.pause();
+    });
+
+    soundButton.addEventListener("click", () => {
+      video.muted = false;
+      soundButton.style.display = "none";
+
+      if (targetVisible) {
+        video.play();
+      }
     });
   </script>
 
